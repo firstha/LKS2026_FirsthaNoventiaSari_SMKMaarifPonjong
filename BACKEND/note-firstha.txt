@@ -1,0 +1,70 @@
+
+1. applicant buat usaha. post /business-verifications
+
+2. loogin sebagai verifier. approve: patch /business-verifications/{id}/approve
+
+3. balik login applicant. baru: post /financing-applications
+
+4. GET /api/v1/me
+
+-> kalau pakai token applicant: harus balik user applicant
+
+-> KAlau verifier: balik verifier
+
+
+rute = 
+
+login applicant /v1/auth/login
+buat usaha /v1/business-verifications
+{
+  "nama_usaha": "Warung Makan",
+  "nib": "1234567890",
+  "npwp": "1234567888",
+  "omzet_bulanan": 10000000,
+  "jumlah_karyawan": 4,
+  "lama_usaha_tahun": 2
+}
+
+simpan id business_verification 
+
+
+login verifier /v1/auth/login
+approve usaha, PATCH /v1/business-verifications/{id [id business_verification] }/approve
+{
+  "action": "approve"
+}
+
+applicant mengajukan pembiayaan [guna token applicant], 
+POST /v1/financing-applications
+{
+  "jumlah_pembiayaan": 20000000,
+  "tenor_bulan": 12,
+  "tujuan_pembiayaan": "moodal tambahan usaha"
+} 
+simpan id financing
+
+
+analyst review, PATCH /api/v1/financing-applications/{id [id financing]}/analyze
+{
+  "action": "review"
+}
+
+analyst recomen, PATCH /api/v1/financing-applications/{id [id financing]}/analyze
+{
+  "action": "recommend",
+  "skor_kelayakan": 90,
+  "rekomendasi_limit": 20000000,
+  "catatan_analisis": "usaha sangat layak"
+}
+
+login manager, /v1/auth/login 
+
+
+melanjutkan-----
+manager aprove, PATCH /api/v1/financing-applications/{id [id pengajuan- pertama]}/analyze
+{
+  "action": "approve"
+}
+
+
+instaltement - database, done

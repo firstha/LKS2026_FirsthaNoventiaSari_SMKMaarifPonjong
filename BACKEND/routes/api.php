@@ -32,4 +32,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/financing-applications', [FinancingApplicationController::class, 'store']);
     });
 
+    Route::middleware(['auth:sanctum','role:analyst'])->group(function () {
+    Route::patch('/financing-applications/{id}/analyze', [FinancingApplicationController::class, 'analyze']);
+    });
+
+    Route::middleware(['auth:sanctum','role:manager'])->group(function () {
+    Route::patch('/financing-applications/{id}/approve', [FinancingApplicationController::class, 'approve']);
+    });
+
 });
