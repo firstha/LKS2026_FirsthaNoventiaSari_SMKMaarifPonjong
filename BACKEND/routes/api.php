@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\FinancingApplicationController;
 use App\Http\Controllers\Api\AuthController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Api\PaymentController;
 
 Route::prefix('v1')->group(function () {
 
@@ -41,5 +42,13 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware('auth:sanctum')->get('/financing-applications/{id}/logs', [FinancingApplicationController::class, 'logs']);
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/payments/create/{financingId}', [PaymentController::class, 'createToken']);
+    Route::get('/payments/{paymentId}/status', [PaymentController::class, 'checkStatus']);
+    });
+    
+    Route::post('/midtrans/callback', [PaymentController::class, 'callback']);
+    Route::middleware('auth:sanctum')->get('/payments/{paymentId}/redirect', [PaymentController::class, 'getPaymentUrl']);
 
 });

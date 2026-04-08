@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\FinancingApplication;
 
 class Installment extends Model
 {
@@ -22,5 +23,10 @@ class Installment extends Model
         static::creating(function ($model) {
             $model->id = (string) Str::uuid();
         });
+    }
+    
+    public function financingApplication()
+    {
+        return $this->belongsTo(FinancingApplication::class);
     }
 }

@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\Payment;
+use App\Models\Installment;
+use App\Models\User;
+use App\Models\BusinessVerification;
 
 class FinancingApplication extends Model
 {
@@ -28,5 +32,24 @@ class FinancingApplication extends Model
         static::creating(function ($model) {
             $model->id = (string) Str::uuid();
         });
+    }
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function installments()
+    {
+        return $this->hasMany(Installment::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function businessVerification()
+    {
+        return $this->belongsTo(BusinessVerification::class);
     }
 }
