@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\FinancingApplication;
 use App\Models\BusinessVerification;
 use App\Models\Installment;
+use App\Models\ApplicationLog;
 
 class FinancingApplicationController extends Controller
 {
@@ -94,6 +95,8 @@ class FinancingApplicationController extends Controller
             ], 400);
         }
 
+        $oldStatus = $app->status;
+
         if ($request->action === 'review') {
             $app->update([
                 'status' => 'under_review'
@@ -116,6 +119,15 @@ class FinancingApplicationController extends Controller
             ]);
         }
 
+        ApplicationLog::create([
+            'financing_application_id' => $app->id,
+            'status_from' => $oldStatus,
+            'status_to' => $app->status,
+            'role' => $request->user()->role,
+            'user_id' => $request->user()->id,
+            'notes' => $request->catatan_analisis
+        ]);
+
         return response()->json([
             'success' => true,
             'data' => $app
@@ -132,6 +144,8 @@ class FinancingApplicationController extends Controller
                 'message' => 'Belum direkomendasikan'
             ], 400);
         }
+
+        $oldStatus = $app->status;
 
         if ($request->action === 'approve') {
 
@@ -168,9 +182,30 @@ class FinancingApplicationController extends Controller
             ]);
         }
 
+        ApplicationLog::create([
+            'financing_application_id' => $app->id,
+            'status_from' => $oldStatus,
+            'status_to' => $app->status,
+            'role' => $request->user()->role,
+            'user_id' => $request->user()->id,
+            'notes' => $request->reason ?? 'Approved'
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Processed'
+        ]);
+    }
+
+    public function logs($id)
+    {
+        $logs = ApplicationLog::where('financing_application_id', $id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $logs
         ]);
     }
 }

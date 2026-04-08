@@ -40,4 +40,6 @@ Route::prefix('v1')->group(function () {
     Route::patch('/financing-applications/{id}/approve', [FinancingApplicationController::class, 'approve']);
     });
 
+    Route::middleware('auth:sanctum')->get('/financing-applications/{id}/logs', [FinancingApplicationController::class, 'logs']);
+
 });
